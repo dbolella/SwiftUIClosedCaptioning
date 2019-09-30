@@ -8,6 +8,7 @@
 
 import SwiftUI
 import AVFoundation
+import Speech
 
 // This is the UIView that contains the AVPlayerLayer for rendering the video
 class PlayerUIView: UIView {
@@ -170,7 +171,8 @@ struct PlayerControlsView : View {
 }
 
 // This is the SwiftUI view which contains the player and its controls
-struct PlayerContainerView : View {
+struct PlayerContainerView : View, VideoMediaInputDelegate {
+    
     // The progress through the video, as a percentage (from 0 to 1)
     @State private var videoPos: Double = 0
     // The duration of the video in seconds
@@ -178,12 +180,26 @@ struct PlayerContainerView : View {
     // Whether we're currently interacting with the seek bar or doing a seek
     @State private var seeking = false
     
-    @ObservedObject var closedCaptioning: ClosedCaptioning
+    @State private var captioning: String = ""
     private let vmInput: VideoMediaInput
+
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
   
     init(url: URL) {
-        closedCaptioning = ClosedCaptioning()
         vmInput = VideoMediaInput(url: url)
+        vmInput.delegate = self
+        
+        let recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        // we want to get continuous recognition and not everything at once at the end of the video
+        recognitionRequest.shouldReportPartialResults = true
+        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [self] result, error in
+            if(result != nil){
+                self.captioning = result!.bestTranscription.formattedString
+            }
+        }
+        self.recognitionRequest = recognitionRequest
     }
   
     var body: some View {
@@ -194,11 +210,8 @@ struct PlayerContainerView : View {
                 PlayerControlsView(videoPos: $videoPos, videoDuration: $videoDuration, seeking: $seeking, player: vmInput.player)
             }
             .padding()
-            .onAppear {
-                self.vmInput.delegate = self.closedCaptioning
-            }
 
-            Text(self.closedCaptioning.captioning)
+            Text(self.captioning)
                 .font(.body)
                 .background(Color.black.opacity(0.5))
                 .foregroundColor(Color.white)
@@ -208,6 +221,10 @@ struct PlayerContainerView : View {
                 .lineLimit(1)
                 .padding()
         }
+    }
+    
+    func videoFrameRefresh(sampleBuffer: CMSampleBuffer) {
+        self.recognitionRequest?.appendAudioSampleBuffer(sampleBuffer)
     }
 }
 

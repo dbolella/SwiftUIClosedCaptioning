@@ -11,7 +11,7 @@ import UIKit
 import AVFoundation;
 import MediaToolbox
 
-protocol VideoMediaInputDelegate: class {
+protocol VideoMediaInputDelegate {
     func videoFrameRefresh(sampleBuffer: CMSampleBuffer) //could be audio or video
 }
 
@@ -20,7 +20,7 @@ class VideoMediaInput: NSObject {
     
     var videoURL: URL!
     
-    weak var delegate: VideoMediaInputDelegate?
+    var delegate: VideoMediaInputDelegate?
     
     private var playerItemObserver: NSKeyValueObservation?
     var displayLink: CADisplayLink!
