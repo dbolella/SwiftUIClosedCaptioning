@@ -34,10 +34,10 @@ class VideoMediaInput: NSObject {
         
     }
     
-    convenience init(url: URL, delegate: VideoMediaInputDelegate){
+    convenience init(url: URL){
         self.init()
         self.videoURL = url
-        self.delegate = delegate
+//        self.delegate = delegate
         
         self.playerItem = AVPlayerItem(url: url)
         

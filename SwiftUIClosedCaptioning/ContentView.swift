@@ -31,8 +31,8 @@ struct ContentView: View {
                     }
                 }
             }
-
-//        PlayerContainerView(url: videoURL)
+            
+            PlayerContainerView(url: videoURL)
         }
     }
 }

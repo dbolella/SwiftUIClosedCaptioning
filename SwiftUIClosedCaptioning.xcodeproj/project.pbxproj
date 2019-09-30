@@ -19,6 +19,7 @@
 		0A0D9E1B233FC8DC00B4240B /* imac7.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0A0D9E1A233FC8D200B4240B /* imac7.mp4 */; };
 		0A0D9E1D233FC9BF00B4240B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D9E1C233FC9BF00B4240B /* Utility.swift */; };
 		0A1AA26B23425CC700260728 /* PlayerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1AA26A23425CC700260728 /* PlayerContainerView.swift */; };
+		0A1AA26D234266D000260728 /* ClosedCaptioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1AA26C234266D000260728 /* ClosedCaptioning.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		0A0D9E1A233FC8D200B4240B /* imac7.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = imac7.mp4; sourceTree = "<group>"; };
 		0A0D9E1C233FC9BF00B4240B /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		0A1AA26A23425CC700260728 /* PlayerContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerContainerView.swift; sourceTree = "<group>"; };
+		0A1AA26C234266D000260728 /* ClosedCaptioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosedCaptioning.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +116,7 @@
 				0A0D9E1C233FC9BF00B4240B /* Utility.swift */,
 				0A1AA26A23425CC700260728 /* PlayerContainerView.swift */,
 				0A0D9DEC233FC8B100B4240B /* ContentView.swift */,
+				0A1AA26C234266D000260728 /* ClosedCaptioning.swift */,
 				0A0D9DEE233FC8B500B4240B /* Assets.xcassets */,
 				0A0D9DF3233FC8B500B4240B /* LaunchScreen.storyboard */,
 				0A0D9DF6233FC8B500B4240B /* Info.plist */,
@@ -285,6 +288,7 @@
 				0A0D9DE9233FC8B100B4240B /* AppDelegate.swift in Sources */,
 				0A0D9DEB233FC8B100B4240B /* SceneDelegate.swift in Sources */,
 				0A0D9DED233FC8B100B4240B /* ContentView.swift in Sources */,
+				0A1AA26D234266D000260728 /* ClosedCaptioning.swift in Sources */,
 				0A0D9E19233FC8CA00B4240B /* VideoMediaInput.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

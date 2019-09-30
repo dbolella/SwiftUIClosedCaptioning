@@ -170,7 +170,7 @@ struct PlayerControlsView : View {
 }
 
 // This is the SwiftUI view which contains the player and its controls
-struct PlayerContainerView : View, VideoMediaInputDelegate {
+struct PlayerContainerView : View {
     // The progress through the video, as a percentage (from 0 to 1)
     @State private var videoPos: Double = 0
     // The duration of the video in seconds
@@ -178,17 +178,35 @@ struct PlayerContainerView : View, VideoMediaInputDelegate {
     // Whether we're currently interacting with the seek bar or doing a seek
     @State private var seeking = false
     
+    @ObservedObject var closedCaptioning: ClosedCaptioning
     private let vmInput: VideoMediaInput
-    private let player: AVPlayer
   
     init(url: URL) {
-        vmInput = VideoMediaInput(url: url, delegate: self)
+        closedCaptioning = ClosedCaptioning()
+        vmInput = VideoMediaInput(url: url)
     }
   
     var body: some View {
-        VStack {
-            PlayerView(videoPos: $videoPos, videoDuration: $videoDuration, seeking: $seeking, player: player)
-            PlayerControlsView(videoPos: $videoPos, videoDuration: $videoDuration, seeking: $seeking, player: vmInput.player)
+        ZStack {
+            VStack {
+                PlayerView(videoPos: $videoPos, videoDuration: $videoDuration, seeking: $seeking, player: vmInput.player)
+                    .frame(height:350)
+                PlayerControlsView(videoPos: $videoPos, videoDuration: $videoDuration, seeking: $seeking, player: vmInput.player)
+            }
+            .padding()
+            .onAppear {
+                self.vmInput.delegate = self.closedCaptioning
+            }
+
+            Text(self.closedCaptioning.captioning)
+                .font(.body)
+                .background(Color.black.opacity(0.5))
+                .foregroundColor(Color.white)
+                .offset(y:100)
+//                .frame(height:350)
+                .truncationMode(.head)
+                .lineLimit(1)
+                .padding()
         }
     }
 }
