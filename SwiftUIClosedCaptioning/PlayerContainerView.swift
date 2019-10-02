@@ -184,6 +184,7 @@ struct PlayerContainerView : View {
     init(url: URL) {
         closedCaptioning = ClosedCaptioning()
         vmInput = VideoMediaInput(url: url)
+        vmInput.delegate = closedCaptioning
     }
   
     var body: some View {
@@ -194,9 +195,6 @@ struct PlayerContainerView : View {
                 PlayerControlsView(videoPos: $videoPos, videoDuration: $videoDuration, seeking: $seeking, player: vmInput.player)
             }
             .padding()
-            .onAppear {
-                self.vmInput.delegate = self.closedCaptioning
-            }
 
             Text(self.closedCaptioning.captioning)
                 .font(.body)
