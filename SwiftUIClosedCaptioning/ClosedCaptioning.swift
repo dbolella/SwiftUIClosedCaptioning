@@ -9,7 +9,11 @@
 import Foundation
 import Speech
 
-class ClosedCaptioning: VideoMediaInputDelegate, ObservableObject {
+protocol ClosedCaptioingDelegate {
+    func captioningUpdated(caption: String)
+}
+
+class ClosedCaptioning: VideoMediaInputDelegate {
     func videoFrameRefresh(sampleBuffer: CMSampleBuffer) {
         recognitionRequest?.appendAudioSampleBuffer(sampleBuffer)
     }
@@ -18,7 +22,7 @@ class ClosedCaptioning: VideoMediaInputDelegate, ObservableObject {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     
-    @Published var captioning: String = ""
+    var delegate: ClosedCaptioingDelegate? = nil
     
     init() {
         setupRecognition()
@@ -30,7 +34,7 @@ class ClosedCaptioning: VideoMediaInputDelegate, ObservableObject {
         recognitionRequest.shouldReportPartialResults = true
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
             if(result != nil){
-                self?.captioning = result!.bestTranscription.formattedString
+                self?.delegate?.captioningUpdated(caption: result!.bestTranscription.formattedString)
             }
 
             // if connected to internet, then once in about every minute recognition task finishes

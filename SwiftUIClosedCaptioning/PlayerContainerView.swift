@@ -170,7 +170,7 @@ struct PlayerControlsView : View {
 }
 
 // This is the SwiftUI view which contains the player and its controls
-struct PlayerContainerView : View {
+struct PlayerContainerView : View, ClosedCaptioingDelegate {
     // The progress through the video, as a percentage (from 0 to 1)
     @State private var videoPos: Double = 0
     // The duration of the video in seconds
@@ -178,12 +178,23 @@ struct PlayerContainerView : View {
     // Whether we're currently interacting with the seek bar or doing a seek
     @State private var seeking = false
     
-    @ObservedObject var closedCaptioning: ClosedCaptioning
+    private let closedCaptioning: ClosedCaptioning
     private let vmInput: VideoMediaInput
+    
+    class CaptionCollector: ObservableObject {
+        @Published var caption: String = ""
+    }
+    @ObservedObject var capCollect = CaptionCollector()
+    
+    func captioningUpdated(caption: String) {
+        self.capCollect.caption = caption
+    }
   
     init(url: URL) {
         closedCaptioning = ClosedCaptioning()
         vmInput = VideoMediaInput(url: url)
+        vmInput.delegate = closedCaptioning
+        closedCaptioning.delegate = self
     }
   
     var body: some View {
@@ -194,11 +205,8 @@ struct PlayerContainerView : View {
                 PlayerControlsView(videoPos: $videoPos, videoDuration: $videoDuration, seeking: $seeking, player: vmInput.player)
             }
             .padding()
-            .onAppear {
-                self.vmInput.delegate = self.closedCaptioning
-            }
 
-            Text(self.closedCaptioning.captioning)
+            Text(self.capCollect.caption)
                 .font(.body)
                 .background(Color.black.opacity(0.5))
                 .foregroundColor(Color.white)
