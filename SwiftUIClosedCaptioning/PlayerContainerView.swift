@@ -179,27 +179,30 @@ struct PlayerContainerView : View, VideoMediaInputDelegate {
     @State private var videoDuration: Double = 0
     // Whether we're currently interacting with the seek bar or doing a seek
     @State private var seeking = false
-    
-    @State private var captioning: String = ""
     private let vmInput: VideoMediaInput
 
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest
     private var recognitionTask: SFSpeechRecognitionTask?
+    
+    class CaptionCollector: ObservableObject {
+        @Published var caption: String = ""
+    }
+    @ObservedObject var capCollect: CaptionCollector
   
     init(url: URL) {
         vmInput = VideoMediaInput(url: url)
-        vmInput.delegate = self
+        capCollect = CaptionCollector()
         
-        let recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         // we want to get continuous recognition and not everything at once at the end of the video
         recognitionRequest.shouldReportPartialResults = true
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [self] result, error in
             if(result != nil){
-                self.captioning = result!.bestTranscription.formattedString
+                self.capCollect.caption = result!.bestTranscription.formattedString
             }
         }
-        self.recognitionRequest = recognitionRequest
+        vmInput.delegate = self
     }
   
     var body: some View {
@@ -211,7 +214,7 @@ struct PlayerContainerView : View, VideoMediaInputDelegate {
             }
             .padding()
 
-            Text(self.captioning)
+            Text(self.capCollect.caption)
                 .font(.body)
                 .background(Color.black.opacity(0.5))
                 .foregroundColor(Color.white)
@@ -224,7 +227,7 @@ struct PlayerContainerView : View, VideoMediaInputDelegate {
     }
     
     func videoFrameRefresh(sampleBuffer: CMSampleBuffer) {
-        self.recognitionRequest?.appendAudioSampleBuffer(sampleBuffer)
+        self.recognitionRequest.appendAudioSampleBuffer(sampleBuffer)
     }
 }
 
